@@ -1,0 +1,31 @@
+{
+  "id": "67f18a2b-2154-49b1-8b3c-d5863e829354",
+  "main": {
+    "group_id": "78d683d4-6555-4961-aebf-39848aff5e09",
+    "num": 32
+  },
+  "sub": [],
+  "date": "2024-01-26",
+  "holding": "onsite",
+  "start_time": "10:00",
+  "end_time": "11:30",
+  "agenda": [
+    "全世代型社会保障構築を目指す改革の道筋（改革工程）について",
+    "こども未来戦略について",
+    "令和６年度厚生労働省予算案について"
+  ],
+  "attendee": [],
+  "sources": [
+    {
+      "url": "https://www.mhlw.go.jp/stf/newpage_38089.html",
+      "source_type": "meeting_page",
+      "title": null
+    }
+  ],
+  "materials": [
+    {
+      "url": "https://www.mhlw.go.jp/stf/newpage_37566.html",
+      "title": "資料一覧"
+    }
+  ]
+}
