@@ -66,12 +66,16 @@ def load_persons() -> List[Dict[str, Any]]:
 def load_meetings() -> List[Dict[str, Any]]:
     results: List[Dict[str, Any]] = []
     dir_path = data_dir() / "meeting"
+    if not dir_path.exists():
+        return results
     for folder in sorted(p for p in dir_path.iterdir() if p.is_dir()):
         basic = folder / "basic.json"
         data = _load_json(basic, {})
         data["id"] = folder.name
         results.append(data)
-    return results
+    def sort_key(m: Dict[str, Any]):
+        return (m.get("date") or "", m.get("main", {}).get("num") or 0)
+    return sorted(results, key=sort_key, reverse=True)
 
 
 def save_group(group_id: str, payload: Dict[str, Any]) -> None:
@@ -201,7 +205,8 @@ def group_tree() -> str:
 
 @app.get("/group/new")
 def group_new() -> str:
-    return render_template("group_form.html", group={}, mode="new")
+    groups = load_groups()
+    return render_template("group_form.html", group={}, mode="new", groups=groups)
 
 
 @app.post("/group/new")
@@ -220,7 +225,8 @@ def group_create() -> str:
         save_group(group_id, payload)
         return redirect(url_for("group_detail", id=group_id))
     except Exception as e:  # noqa: BLE001
-        return render_template("group_form.html", group=payload, mode="new", error=str(e))
+        groups = load_groups()
+        return render_template("group_form.html", group=payload, mode="new", error=str(e), groups=groups)
 
 
 @app.get("/group/<id>")
@@ -230,7 +236,49 @@ def group_detail(id: str) -> str:
         return "not found", 404
     group = _load_json(path, {})
     group["id"] = id
-    return render_template("group_detail.html", group=group)
+    groups = load_groups()
+    parent_label = "-"
+    parent_id_for_link = None
+    if group.get("parent"):
+        parent_id = group["parent"]
+        parent_name = next((g["name"] for g in groups if g.get("id") == parent_id), None)
+        parent_label = f"{parent_name} ({parent_id})" if parent_name else parent_id
+        parent_id_for_link = parent_id
+    meetings = load_meetings()
+    main_meetings = [m for m in meetings if m.get("main", {}).get("group_id") == id]
+    sub_meetings = [
+        m
+        for m in meetings
+        if any(sub.get("group_id") == id for sub in m.get("sub", []))
+    ]
+    return render_template(
+        "group_detail.html",
+        group=group,
+        parent_label=parent_label,
+        parent_id=parent_id_for_link,
+        main_meetings=main_meetings,
+        sub_meetings=sub_meetings,
+    )
+
+
+@app.get("/group/<id>/children")
+def group_children(id: str) -> str:
+    groups = load_groups()
+    current = next((g for g in groups if g.get("id") == id), None)
+    if current is None:
+        return "not found", 404
+    by_parent: Dict[Optional[str], List[Dict[str, Any]]] = {}
+    for g in groups:
+        by_parent.setdefault(g.get("parent"), []).append(g)
+
+    def build(parent_id: Optional[str]) -> List[Dict[str, Any]]:
+        nodes: List[Dict[str, Any]] = []
+        for child in by_parent.get(parent_id, []):
+            nodes.append({"data": child, "children": build(child["id"])})
+        return nodes
+
+    tree = build(id)
+    return render_template("group_children.html", group=current, tree=tree)
 
 
 @app.get("/group/<id>/edit")
@@ -240,7 +288,8 @@ def group_edit(id: str) -> str:
         return "not found", 404
     group = _load_json(path, {})
     group["id"] = id
-    return render_template("group_form.html", group=group, mode="edit")
+    groups = load_groups()
+    return render_template("group_form.html", group=group, mode="edit", groups=groups)
 
 
 @app.post("/group/<id>/edit")
@@ -258,7 +307,8 @@ def group_update(id: str) -> str:
         save_group(id, payload)
         return redirect(url_for("group_detail", id=id))
     except Exception as e:  # noqa: BLE001
-        return render_template("group_form.html", group=payload, mode="edit", error=str(e))
+        groups = load_groups()
+        return render_template("group_form.html", group=payload, mode="edit", error=str(e), groups=groups)
 
 
 @app.post("/group/<id>/delete")
@@ -332,18 +382,18 @@ def person_update(id: str) -> str:
         return render_template("person_form.html", person=payload, mode="edit", error=str(e))
 
 
-@app.post("/person/<id>/delete")
-def person_delete(id: str) -> str:
-    delete_person(id)
-    return redirect(url_for("person_list"))
-
-
-# ---- meeting ----
-
-
 @app.get("/meeting")
 def meeting_list() -> str:
+    q = request.args.get("q", "").strip().lower()
     meetings = load_meetings()
+    if q:
+        meetings = [
+            m for m in meetings
+            if q in m.get("id", "").lower()
+            or q in (m.get("date", "") or "").lower()
+            or q in (str(m.get("main", {}).get("num", ""))).lower()
+            or q in (m.get("holding", "") or "").lower()
+        ]
     groups = load_groups()
     group_map = {g["id"]: g["name"] for g in groups}
     persons = load_persons()
@@ -353,6 +403,7 @@ def meeting_list() -> str:
         meetings=meetings,
         group_map=group_map,
         person_map=person_map,
+        q=q,
     )
 
 
@@ -360,9 +411,16 @@ def meeting_list() -> str:
 def meeting_new() -> str:
     groups = load_groups()
     persons = load_persons()
+    prefill_group = request.args.get("main_group_id", "").strip()
+    meeting_prefill = {
+        "main": {"group_id": prefill_group, "num": ""},
+        "sub_group_id_list": ["" for _ in range(3)],
+        "sub_num_list": ["" for _ in range(3)],
+        "attendee_multi": [],
+    }
     return render_template(
         "meeting_form.html",
-        meeting={},
+        meeting=meeting_prefill,
         mode="new",
         groups=groups,
         persons=persons,
@@ -373,21 +431,31 @@ def meeting_new() -> str:
 def _extract_meeting_form(form) -> Dict[str, Any]:
     main_group_id = form["main_group_id"].strip()
     main_num = int(form["main_num"])
-    sub_raw = form.get("sub_lines", "")
     agenda_raw = form.get("agenda_lines", "")
     sources_raw = form.get("sources_lines", "")
     materials_raw = form.get("materials_lines", "")
 
-    attendees_multi = []
+    attendees: List[str] = []
     if hasattr(form, "getlist"):
-        attendees_multi = [a for a in form.getlist("attendee_multi") if a]
-    attendees_raw = form.get("attendee_lines", "")
-    attendees = attendees_multi if attendees_multi else _parse_attendees(attendees_raw)
+        attendees = [a.strip() for a in form.getlist("attendee_multi") if a.strip()]
+
+    sub_pairs: List[Dict[str, Any]] = []
+    if hasattr(form, "getlist"):
+        gids = form.getlist("sub_group_id")
+        nums = form.getlist("sub_num")
+        for gid, num in zip(gids, nums):
+            gid = gid.strip()
+            if not gid:
+                continue
+            sub_pairs.append({"group_id": gid, "num": int(num)})
+    if not sub_pairs:
+        sub_raw = form.get("sub_lines", "")
+        sub_pairs = _parse_sub_lines(sub_raw)
 
     payload = {
         "id": form.get("id", "").strip(),
         "main": {"group_id": main_group_id, "num": main_num},
-        "sub": _parse_sub_lines(sub_raw),
+        "sub": sub_pairs,
         "date": form["date"].strip(),
         "holding": form["holding"].strip(),
         "start_time": form.get("start_time") or None,
@@ -449,9 +517,11 @@ def meeting_edit(id: str) -> str:
     meeting["id"] = id
     groups = load_groups()
     persons = load_persons()
-    # populate textareas
-    meeting["sub_lines"] = "\n".join(f"{s['group_id']},{s['num']}" for s in meeting.get("sub", []))
-    meeting["attendee_lines"] = "\n".join(meeting.get("attendee", []))
+    # populate helper fields
+    sub_list = meeting.get("sub", [])
+    meeting["sub_group_id_list"] = [s["group_id"] for s in sub_list] + ["" for _ in range(3 - len(sub_list))]
+    meeting["sub_num_list"] = [s["num"] for s in sub_list] + ["" for _ in range(3 - len(sub_list))]
+    meeting["attendee_multi"] = meeting.get("attendee", [])
     meeting["agenda_lines"] = "\n".join(meeting.get("agenda", []))
     meeting["sources_lines"] = "\n".join(
         f"{s.get('url','')}|{s.get('source_type','')}|{s.get('title','') or ''}"
@@ -494,6 +564,34 @@ def meeting_update(id: str) -> str:
 def meeting_delete(id: str) -> str:
     delete_meeting(id)
     return redirect(url_for("meeting_list"))
+
+
+def _find_meetings_with_person(person_id: str) -> List[Dict[str, Any]]:
+    meetings = load_meetings()
+    return [m for m in meetings if person_id in m.get("attendee", [])]
+
+
+@app.post("/person/<id>/delete")
+def person_delete(id: str) -> str:
+    linked_meetings = _find_meetings_with_person(id)
+    if linked_meetings and request.form.get("confirm") != "yes":
+        # 確認ページへ
+        group_map = {g["id"]: g["name"] for g in load_groups()}
+        return render_template(
+            "person_delete_confirm.html",
+            person_id=id,
+            meetings=linked_meetings,
+            group_map=group_map,
+        )
+
+    # remove_attendance が on の場合は該当会議からattendeeを外す
+    if request.form.get("remove_attendance") == "on":
+        for m in _find_meetings_with_person(id):
+            m["attendee"] = [a for a in m.get("attendee", []) if a != id]
+            save_meeting(m["id"], m)
+
+    delete_person(id)
+    return redirect(url_for("person_list"))
 
 
 if __name__ == "__main__":

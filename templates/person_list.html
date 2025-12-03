@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="flex items-center justify-between">
+  <div>
+    <p class="text-sm uppercase tracking-wide text-slate-500">data</p>
+    <h1 class="text-2xl font-bold text-slate-900">Person</h1>
+  </div>
+  <a href="{{ url_for('person_new') }}" class="bg-blue-600 text-white px-3 py-2 rounded shadow hover:opacity-90 text-sm">新規</a>
+</div>
+<div class="grid md:grid-cols-2 gap-3">
+  {% for p in persons %}
+  <a class="block border rounded-lg p-3 bg-white shadow-sm hover:shadow" href="{{ url_for('person_detail', id=p.id) }}">
+    <p class="font-semibold text-slate-800 truncate">{{ p.name or p.id }}</p>
+    <p class="text-xs text-slate-500">id: {{ p.id }}</p>
+  </a>
+  {% endfor %}
+</div>
+<p><a class="text-blue-600 hover:underline text-sm" href="{{ url_for('index') }}">← 戻る</a></p>
+{% endblock %}

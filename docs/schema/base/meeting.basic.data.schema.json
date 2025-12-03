@@ -57,7 +57,7 @@
           "url": { "type": "string", "format": "uri" },
           "source_type": {
             "type": "string",
-            "enum": ["meeting_page", "minutes", "materials", "other"]
+            "enum": ["meeting_page", "minutes", "other"]
           },
           "title": { "type": ["string", "null"] }
         },

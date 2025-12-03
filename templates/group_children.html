@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<a class="text-blue-600 hover:underline text-sm" href="{{ url_for('group_detail', id=group.id) }}">← {{ group.name or group.id }} へ戻る</a>
+<div class="space-y-3">
+  <div>
+    <p class="text-sm uppercase tracking-wide text-slate-500">group</p>
+    <h1 class="text-2xl font-bold text-slate-900">{{ group.name }} の子団体</h1>
+    <p class="text-slate-600 text-sm">id: {{ group.id }}</p>
+  </div>
+  <div class="p-3 border rounded bg-white shadow-sm">
+    {% macro render_nodes(nodes) -%}
+      <ul class="pl-4 space-y-1 list-disc">
+        {% for n in nodes %}
+          <li>
+            <a class="text-blue-600 hover:underline" href="{{ url_for('group_detail', id=n.data.id) }}">{{ n.data.name or n.data.id }}</a>
+            {% if n.children %}
+              {{ render_nodes(n.children) }}
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    {%- endmacro %}
+    {% if tree %}
+      {{ render_nodes(tree) }}
+    {% else %}
+      <p class="text-slate-500 text-sm">子団体はありません。</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

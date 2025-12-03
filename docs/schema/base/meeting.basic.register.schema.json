@@ -53,18 +53,18 @@
       },
       "sources": {
         "type": "array",
-        "items": {
-          "type": "object",
-          "properties": {
-            "url": { "type": "string", "format": "uri" },
-            "source_type": {
-              "type": "string",
-              "enum": ["meeting_page", "minutes", "materials", "other"]
-            },
-            "title": { "type": "string" }
+      "items": {
+        "type": "object",
+        "properties": {
+          "url": { "type": "string", "format": "uri" },
+          "source_type": {
+            "type": "string",
+            "enum": ["meeting_page", "minutes", "other"]
           },
-          "required": ["url"],
-          "additionalProperties": false
+          "title": { "type": "string" }
+        },
+        "required": ["url"],
+        "additionalProperties": false
         }
       },
       "materials": {

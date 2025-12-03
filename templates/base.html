@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <title>kaigitai admin</title>
+  </head>
+  <body class="bg-slate-50 text-slate-900">
+    <header class="bg-white border-b">
+      <div class="max-w-5xl mx-auto px-6 py-3 flex items-center justify-between">
+        <a class="flex items-center space-x-3 hover:opacity-80" href="{{ url_for('index') }}">
+          <div class="w-8 h-8 rounded bg-blue-600 text-white flex items-center justify-center font-bold text-lg">K</div>
+          <div>
+            <p class="text-sm font-semibold text-slate-900">kaigitai admin</p>
+            <p class="text-xs text-slate-500">登録・閲覧</p>
+          </div>
+        </a>
+        <nav class="flex items-center space-x-3 text-sm">
+          <a class="text-slate-700 hover:text-blue-600" href="{{ url_for('group_list') }}">Group</a>
+          <a class="text-slate-700 hover:text-blue-600" href="{{ url_for('person_list') }}">Person</a>
+          <a class="text-slate-700 hover:text-blue-600" href="{{ url_for('meeting_list') }}">Meeting</a>
+          <a class="text-slate-700 hover:text-blue-600" href="{{ url_for('index') }}">Home</a>
+        </nav>
+      </div>
+    </header>
+    <main class="max-w-5xl mx-auto p-6 space-y-6">
+      {% block content %}{% endblock %}
+    </main>
+  </body>
+</html>

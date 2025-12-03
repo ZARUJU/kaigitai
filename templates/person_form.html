@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<a class="text-blue-600 hover:underline text-sm" href="{{ url_for('person_list') }}">← 一覧へ</a>
+<div class="space-y-3">
+  <div>
+    <p class="text-sm uppercase tracking-wide text-slate-500">person</p>
+    <h1 class="text-2xl font-bold text-slate-900">{{ '新規作成' if mode=='new' else '編集' }}</h1>
+  </div>
+  {% if error %}
+  <div class="p-3 rounded border border-red-200 bg-red-50 text-red-700 text-sm">{{ error }}</div>
+  {% endif %}
+  <form method="POST" class="space-y-3">
+    <label class="block text-sm text-slate-700">name
+      <input name="name" value="{{ person.name or '' }}" required class="w-full border rounded p-2 bg-white shadow-sm">
+    </label>
+    <label class="block text-sm text-slate-700">name_yomi
+      <input name="name_yomi" value="{{ person.name_yomi or '' }}" class="w-full border rounded p-2 bg-white shadow-sm">
+    </label>
+    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded shadow hover:opacity-90">保存</button>
+  </form>
+</div>
+{% endblock %}

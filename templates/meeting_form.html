@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block content %}
+<a class="text-blue-600 hover:underline text-sm" href="{{ url_for('meeting_list') }}">← 一覧へ</a>
+<div class="space-y-3">
+  <div>
+    <p class="text-sm uppercase tracking-wide text-slate-500">meeting</p>
+    <h1 class="text-2xl font-bold text-slate-900">{{ '新規作成' if mode=='new' else '編集' }}</h1>
+  </div>
+  {% if error %}
+  <div class="p-3 rounded border border-red-200 bg-red-50 text-red-700 text-sm">{{ error }}</div>
+  {% endif %}
+  <form method="POST" class="space-y-3">
+    <datalist id="group_options">
+      {% for g in groups %}
+      <option value="{{ g.id }}">{{ g.name }} ({{ g.id }})</option>
+      {% endfor %}
+    </datalist>
+    <datalist id="person_options">
+      {% for p in persons %}
+      <option value="{{ p.id }}">{{ p.name }} ({{ p.id }})</option>
+      {% endfor %}
+    </datalist>
+
+    <div class="grid md:grid-cols-2 gap-3">
+      <label class="block text-sm text-slate-700">main group
+        <input name="main_group_id" list="group_options" value="{{ meeting.main.group_id if meeting.main else '' }}" required class="w-full border rounded p-2 bg-white shadow-sm" placeholder="group idを検索">
+      </label>
+      <label class="block text-sm text-slate-700">main num
+        <input name="main_num" type="number" min="0" step="1" value="{{ meeting.main.num if meeting.main else '' }}" required class="w-full border rounded p-2 bg-white shadow-sm">
+      </label>
+    </div>
+    <div class="grid md:grid-cols-2 gap-3">
+      <label class="block text-sm text-slate-700">date
+        <input name="date" value="{{ meeting.date or '' }}" required pattern="\\d{4}-\\d{2}-\\d{2}" title="yyyy-mm-dd 形式で入力" class="w-full border rounded p-2 bg-white shadow-sm" placeholder="yyyy-mm-dd">
+      </label>
+      <label class="block text-sm text-slate-700">holding
+        <select name="holding" required class="w-full border rounded p-2 bg-white shadow-sm">
+          {% set h = meeting.holding or '' %}
+          {% for opt in ['onsite','online','hybrid','document'] %}
+            <option value="{{ opt }}" {% if h==opt %}selected{% endif %}>{{ opt }}</option>
+          {% endfor %}
+        </select>
+      </label>
+    </div>
+    <div class="grid md:grid-cols-2 gap-3">
+      <label class="block text-sm text-slate-700">start_time
+        <input name="start_time" value="{{ meeting.start_time or '' }}" pattern="\\d{2}:\\d{2}" title="hh:mm 形式で入力" class="w-full border rounded p-2 bg-white shadow-sm" placeholder="hh:mm">
+      </label>
+      <label class="block text-sm text-slate-700">end_time
+        <input name="end_time" value="{{ meeting.end_time or '' }}" pattern="\\d{2}:\\d{2}" title="hh:mm 形式で入力" class="w-full border rounded p-2 bg-white shadow-sm" placeholder="hh:mm">
+      </label>
+    </div>
+    <div class="space-y-2">
+      <p class="text-sm text-slate-700">sub（複数行）</p>
+      {% for idx in range(meeting.sub_group_id_list|length if meeting.sub_group_id_list else 3) %}
+      <div class="grid md:grid-cols-2 gap-2">
+        <input name="sub_group_id" list="group_options" value="{{ meeting.sub_group_id_list[idx] if meeting.sub_group_id_list else '' }}" class="w-full border rounded p-2 bg-white shadow-sm" placeholder="group id">
+        <input name="sub_num" type="number" min="0" step="1" value="{{ meeting.sub_num_list[idx] if meeting.sub_num_list else '' }}" class="w-full border rounded p-2 bg-white shadow-sm" placeholder="num">
+      </div>
+      {% endfor %}
+      <p class="text-xs text-slate-500 mt-1">足りなければ保存後に再度編集して追記してください</p>
+    </div>
+    <label class="block text-sm text-slate-700">agenda（1行1件）
+      <textarea name="agenda_lines" rows="4" class="w-full font-mono text-sm border rounded p-2 bg-white shadow-sm">{{ meeting.agenda_lines or '' }}</textarea>
+    </label>
+    <div class="space-y-2">
+      <p class="text-sm text-slate-700">attendee（検索付き、複数行）</p>
+      <div id="attendee-container" class="space-y-2">
+        {% set att_list = meeting.attendee_multi if meeting.attendee_multi else [''] %}
+        {% for val in att_list %}
+        <div class="flex space-x-2 attendee-row">
+          <input name="attendee_multi" list="person_options" value="{{ val }}" class="w-full border rounded p-2 bg-white shadow-sm" placeholder="person id">
+          <button type="button" class="shrink-0 px-2 rounded border text-sm text-slate-600 hover:bg-slate-100 remove-attendee">削除</button>
+        </div>
+        {% endfor %}
+      </div>
+      <button type="button" id="add-attendee" class="text-sm text-blue-600 hover:underline">+ 行を追加</button>
+      <p class="text-xs text-slate-500 mt-1">候補は person id/name を入力して検索できます</p>
+    </div>
+    <label class="block text-sm text-slate-700">sources（1行: url|source_type|title）
+      <textarea name="sources_lines" rows="4" class="w-full font-mono text-sm border rounded p-2 bg-white shadow-sm" placeholder="https://example.com|meeting_page|タイトル">{{ meeting.sources_lines or '' }}</textarea>
+      <p class="text-xs text-slate-500 mt-1">source_type: meeting_page / minutes / other</p>
+      <p class="text-xs text-slate-500">例: https://example.com/agenda|meeting_page|開催案内</p>
+    </label>
+    <label class="block text-sm text-slate-700">materials（1行: url|title）
+      <textarea name="materials_lines" rows="4" class="w-full font-mono text-sm border rounded p-2 bg-white shadow-sm" placeholder="https://example.com/material.pdf|資料名">{{ meeting.materials_lines or '' }}</textarea>
+    </label>
+    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded shadow hover:opacity-90">保存</button>
+  </form>
+  <script>
+    const addBtn = document.getElementById("add-attendee");
+    const container = document.getElementById("attendee-container");
+    addBtn?.addEventListener("click", () => {
+      const row = document.createElement("div");
+      row.className = "flex space-x-2 attendee-row";
+      const input = document.createElement("input");
+      input.name = "attendee_multi";
+      input.setAttribute("list", "person_options");
+      input.className = "w-full border rounded p-2 bg-white shadow-sm";
+      input.placeholder = "person id";
+      const removeBtn = document.createElement("button");
+      removeBtn.type = "button";
+      removeBtn.className = "shrink-0 px-2 rounded border text-sm text-slate-600 hover:bg-slate-100 remove-attendee";
+      removeBtn.textContent = "削除";
+      removeBtn.addEventListener("click", () => {
+        row.remove();
+      });
+      row.appendChild(input);
+      row.appendChild(removeBtn);
+      container.appendChild(row);
+    });
+    container?.addEventListener("click", (e) => {
+      if (e.target && e.target.classList.contains("remove-attendee")) {
+        e.target.closest(".attendee-row")?.remove();
+      }
+    });
+  </script>
+</div>
+{% endblock %}

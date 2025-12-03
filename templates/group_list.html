@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="flex items-center justify-between">
+  <div>
+    <p class="text-sm uppercase tracking-wide text-slate-500">data</p>
+    <h1 class="text-2xl font-bold text-slate-900">Group</h1>
+  </div>
+  <div class="space-x-2">
+    <a href="{{ url_for('group_tree') }}" class="text-sm text-blue-600 hover:underline">ツリー表示</a>
+    <a href="{{ url_for('group_new') }}" class="bg-blue-600 text-white px-3 py-2 rounded shadow hover:opacity-90 text-sm">新規</a>
+  </div>
+</div>
+<div class="grid md:grid-cols-2 gap-3">
+  {% for g in groups %}
+  <a class="block border rounded-lg p-3 bg-white shadow-sm hover:shadow" href="{{ url_for('group_detail', id=g.id) }}">
+    <p class="font-semibold text-slate-800 truncate">{{ g.name or g.id }}</p>
+    <p class="text-xs text-slate-500">id: {{ g.id }}</p>
+    <p class="text-xs text-slate-500">category: {{ g.category }}</p>
+  </a>
+  {% endfor %}
+</div>
+<p><a class="text-blue-600 hover:underline text-sm" href="{{ url_for('index') }}">← 戻る</a></p>
+{% endblock %}

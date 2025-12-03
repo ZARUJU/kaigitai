@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<header class="space-y-2">
+  <p class="text-sm uppercase tracking-wide text-slate-500">kaigitai admin</p>
+  <h1 class="text-3xl font-bold text-slate-900">管理メニュー</h1>
+  <p class="text-slate-600">フォームで CRUD を行います。</p>
+</header>
+<div class="grid md:grid-cols-3 gap-4">
+  <a class="block p-4 rounded-lg border bg-white shadow-sm hover:shadow" href="{{ url_for('group_list') }}">
+    <p class="font-semibold text-slate-800">Group</p>
+    <p class="text-sm text-slate-600">一覧・新規・編集・ツリー表示</p>
+  </a>
+  <a class="block p-4 rounded-lg border bg-white shadow-sm hover:shadow" href="{{ url_for('person_list') }}">
+    <p class="font-semibold text-slate-800">Person</p>
+    <p class="text-sm text-slate-600">一覧・新規・編集</p>
+  </a>
+  <a class="block p-4 rounded-lg border bg-white shadow-sm hover:shadow" href="{{ url_for('meeting_list') }}">
+    <p class="font-semibold text-slate-800">Meeting</p>
+    <p class="text-sm text-slate-600">一覧・新規・編集</p>
+  </a>
+</div>
+{% endblock %}

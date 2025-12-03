@@ -1,0 +1,27 @@
+{
+  "id": "a3747da2-6ba5-4fb4-a353-1c2cf8e69f40",
+  "main": {
+    "group_id": "78d683d4-6555-4961-aebf-39848aff5e09",
+    "num": 33
+  },
+  "sub": [],
+  "date": "2025-02-03",
+  "holding": "onsite",
+  "start_time": "18:00",
+  "end_time": "19:22",
+  "agenda": [
+    "会長の選出について",
+    "「全世代型社会保障構築を目指す改革の道筋（改革工程）」の進捗について",
+    "令和７年度予算案について",
+    "社会保障審議会運営規則第４条に規定する「会長の同意」の運用解釈について"
+  ],
+  "attendee": [],
+  "sources": [
+    {
+      "url": "https://www.mhlw.go.jp/stf/newpage_56633.html",
+      "source_type": "meeting_page",
+      "title": null
+    }
+  ],
+  "materials": []
+}

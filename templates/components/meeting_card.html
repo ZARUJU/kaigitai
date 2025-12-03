@@ -1,0 +1,7 @@
+<a class="block border rounded-lg p-3 bg-white shadow-sm hover:shadow" href="{{ url_for('meeting_detail', id=meeting.id) }}">
+  <p class="font-semibold text-slate-800 truncate">
+    {{ group_map.get(meeting.main.group_id, meeting.main.group_id) }} / #{{ meeting.main.num }}
+  </p>
+  <p class="text-xs text-slate-500">{{ meeting.date }} / {{ meeting.holding }}</p>
+  <p class="text-xs text-slate-400 break-all">{{ meeting.id }}</p>
+</a>

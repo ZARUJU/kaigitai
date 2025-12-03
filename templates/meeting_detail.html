@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block content %}
+<a class="text-blue-600 hover:underline text-sm" href="{{ url_for('meeting_list') }}">← 一覧へ</a>
+<div class="space-y-3">
+  <div>
+    <p class="text-sm uppercase tracking-wide text-slate-500">meeting</p>
+    <h1 class="text-2xl font-bold text-slate-900">{{ group_map.get(meeting.main.group_id, meeting.main.group_id) }} / #{{ meeting.main.num }}</h1>
+    <p class="text-slate-600 text-sm">id: {{ meeting.id }}</p>
+  </div>
+  <div class="grid md:grid-cols-2 gap-3">
+    <div class="p-3 rounded border bg-white shadow-sm">
+      <p class="text-xs text-slate-500">date / holding</p>
+      <p class="font-semibold text-slate-800">{{ meeting.date }} / {{ meeting.holding }}</p>
+    </div>
+    <div class="p-3 rounded border bg-white shadow-sm">
+      <p class="text-xs text-slate-500">time</p>
+      <p class="font-semibold text-slate-800">{{ meeting.start_time }} - {{ meeting.end_time }}</p>
+    </div>
+    <div class="p-3 rounded border bg-white shadow-sm">
+      <p class="text-xs text-slate-500">main</p>
+      {% set main_label = group_map.get(meeting.main.group_id, meeting.main.group_id) %}
+      <p class="font-semibold text-slate-800"><a class="text-blue-600 hover:underline" href="{{ url_for('group_detail', id=meeting.main.group_id) }}">{{ main_label }}</a> / #{{ meeting.main.num }}</p>
+    </div>
+  </div>
+  {% if meeting.sub %}
+  <div class="p-3 rounded border bg-white shadow-sm">
+    <p class="text-xs text-slate-500">sub</p>
+    <ul class="list-disc pl-5 space-y-1 text-slate-800">
+      {% for s in meeting.sub %}
+      {% set gname = group_map.get(s.group_id, s.group_id) %}
+      <li><a class="text-blue-600 hover:underline" href="{{ url_for('group_detail', id=s.group_id) }}">{{ gname }}</a> / #{{ s.num }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+  {% if meeting.agenda %}
+  <div class="p-3 rounded border bg-white shadow-sm">
+    <p class="text-xs text-slate-500">agenda</p>
+    <ul class="list-disc pl-5 space-y-1 text-slate-800">
+      {% for a in meeting.agenda %}
+      <li>{{ a }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+  {% if meeting.attendee %}
+  <div class="p-3 rounded border bg-white shadow-sm">
+    <p class="text-xs text-slate-500">attendee</p>
+    <ul class="list-disc pl-5 space-y-1 text-slate-800">
+      {% for a in meeting.attendee %}
+      {% set label = person_map.get(a, a) %}
+      <li><a class="text-blue-600 hover:underline" href="{{ url_for('person_detail', id=a) }}">{{ label }}</a></li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+  {% if meeting.sources %}
+  <div class="p-3 rounded border bg-white shadow-sm">
+    <p class="text-xs text-slate-500">sources</p>
+    <ul class="list-disc pl-5 space-y-1 text-slate-800">
+      {% for s in meeting.sources %}
+      <li><a class="text-blue-600 hover:underline break-all" href="{{ s.url }}">{{ s.title or s.url }}</a> ({{ s.source_type }})</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+  {% if meeting.materials %}
+  <div class="p-3 rounded border bg-white shadow-sm">
+    <p class="text-xs text-slate-500">materials</p>
+    <ul class="list-disc pl-5 space-y-1 text-slate-800">
+      {% for m in meeting.materials %}
+      <li><a class="text-blue-600 hover:underline break-all" href="{{ m.url }}">{{ m.title or m.url }}</a></li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+  <div class="flex space-x-2">
+    <a href="{{ url_for('meeting_edit', id=meeting.id) }}" class="bg-blue-600 text-white px-3 py-2 rounded shadow hover:opacity-90 text-sm">編集</a>
+    <form method="POST" action="{{ url_for('meeting_delete', id=meeting.id) }}" onsubmit="return confirm('削除しますか？');">
+      <button type="submit" class="bg-red-600 text-white px-3 py-2 rounded shadow hover:opacity-90 text-sm">削除</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

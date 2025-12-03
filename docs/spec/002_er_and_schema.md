@@ -99,7 +99,7 @@ erDiagram
 | フィールド  | 必須 | 型     | 制約・説明 | 例 |
 | ----------- | ---- | ------ | ---------- | -- |
 | url         | 必須 | string | トリム後非空 |  |
-| source_type | 任意 | `"meeting_page" \| "minutes" \| "materials" \| "other"` | 省略時"other" |  |
+| source_type | 任意 | `"meeting_page" \| "minutes" \| "other"` | 省略時"other" |  |
 | title       | 任意 | string | トリム、空ならnull |  |
 
 #### Material（MEETING配下）

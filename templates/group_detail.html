@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block content %}
+<a class="text-blue-600 hover:underline text-sm" href="{{ url_for('group_list') }}">← 一覧へ</a>
+<div class="space-y-3">
+  <div>
+    <p class="text-sm uppercase tracking-wide text-slate-500">group</p>
+    <h1 class="text-2xl font-bold text-slate-900">{{ group.name }}</h1>
+    <p class="text-slate-600 text-sm">id: {{ group.id }}</p>
+  </div>
+  <div class="grid md:grid-cols-2 gap-3">
+    <div class="p-3 rounded border bg-white shadow-sm">
+      <p class="text-xs text-slate-500">category</p>
+      <p class="text-slate-800 font-semibold">{{ group.category }}</p>
+    </div>
+    <div class="p-3 rounded border bg-white shadow-sm">
+      <p class="text-xs text-slate-500">parent</p>
+      {% if parent_id %}
+        <a class="text-blue-600 hover:underline font-semibold" href="{{ url_for('group_detail', id=parent_id) }}">{{ parent_label }}</a>
+      {% else %}
+        <p class="text-slate-800 font-semibold">{{ parent_label }}</p>
+      {% endif %}
+    </div>
+    <div class="p-3 rounded border bg-white shadow-sm">
+      <p class="text-xs text-slate-500">official_url</p>
+      <a class="text-blue-600 hover:underline break-all" href="{{ group.official_url }}">{{ group.official_url }}</a>
+    </div>
+    {% if group.list_url %}
+    <div class="p-3 rounded border bg-white shadow-sm">
+      <p class="text-xs text-slate-500">list_url</p>
+      <a class="text-blue-600 hover:underline break-all" href="{{ group.list_url }}">{{ group.list_url }}</a>
+    </div>
+    {% endif %}
+  </div>
+  <div class="flex space-x-2">
+    <a href="{{ url_for('group_edit', id=group.id) }}" class="bg-blue-600 text-white px-3 py-2 rounded shadow hover:opacity-90 text-sm">編集</a>
+    <form method="POST" action="{{ url_for('group_delete', id=group.id) }}" onsubmit="return confirm('削除しますか？');">
+      <button type="submit" class="bg-red-600 text-white px-3 py-2 rounded shadow hover:opacity-90 text-sm">削除</button>
+    </form>
+    <a href="{{ url_for('meeting_new', main_group_id=group.id) }}" class="bg-green-600 text-white px-3 py-2 rounded shadow hover:opacity-90 text-sm">この団体で会議追加</a>
+    <a href="{{ url_for('group_children', id=group.id) }}" class="text-blue-600 hover:underline text-sm self-center">子団体ツリー</a>
+  </div>
+
+  {% if main_meetings %}
+  <div class="space-y-2">
+    <p class="text-sm font-semibold text-slate-700">この団体が main の会議</p>
+    <div class="grid md:grid-cols-2 gap-3">
+      {% for m in main_meetings %}
+        {% set meeting = m %}
+        {% include "components/meeting_card.html" %}
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  {% if sub_meetings %}
+  <div class="space-y-2">
+    <p class="text-sm font-semibold text-slate-700">この団体が sub の会議</p>
+    <div class="grid md:grid-cols-2 gap-3">
+      {% for m in sub_meetings %}
+        {% set meeting = m %}
+        {% include "components/meeting_card.html" %}
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
