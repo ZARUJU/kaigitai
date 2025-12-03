@@ -1,0 +1,28 @@
+{
+  "json.schemas": [
+    {
+      "fileMatch": ["/register/group/form.json"],
+      "url": "/docs/schema/base/group.register.schema.json"
+    },
+    {
+      "fileMatch": ["/register/person/form.json"],
+      "url": "/docs/schema/base/person.register.schema.json"
+    },
+    {
+      "fileMatch": ["/register/meeting/form.json"],
+      "url": "/docs/schema/base/meeting.basic.register.schema.json"
+    },
+    {
+      "fileMatch": ["/data/group/*.json"],
+      "url": "/docs/schema/base/group.data.schema.json"
+    },
+    {
+      "fileMatch": ["/data/person/*.json"],
+      "url": "/docs/schema/base/person.data.schema.json"
+    },
+    {
+      "fileMatch": ["/data/meeting/*/basic.json"],
+      "url": "/docs/schema/base/meeting.basic.data.schema.json"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Group register form",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "id": { "type": "string" },
+      "name": { "type": "string", "minLength": 1 },
+      "parent": { "type": ["string", "null"] },
+      "category": { "type": "string", "minLength": 1 },
+      "list_url": { "type": ["string", "null"], "format": "uri" },
+      "official_url": { "type": "string", "format": "uri" }
+    },
+    "required": ["name", "category", "official_url"],
+    "additionalProperties": false
+  }
+}

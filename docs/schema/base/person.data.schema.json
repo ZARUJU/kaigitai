@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Person data",
+  "type": "object",
+  "properties": {
+    "id": { "type": "string" },
+    "name": { "type": "string", "minLength": 1 },
+    "name_yomi": { "type": ["string", "null"] }
+  },
+  "required": ["id", "name"],
+  "additionalProperties": false
+}
