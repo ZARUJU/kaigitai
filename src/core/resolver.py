@@ -17,6 +17,8 @@ class NameRegistry:
             value_id = item["id"]
             key = cls._normalize(name)
             mapping[key] = value_id
+            # UUIDが直接指定された場合も解決できるよう、ID自体もキーに登録する
+            mapping[cls._normalize(value_id)] = value_id
         return cls(mapping)
 
     @staticmethod

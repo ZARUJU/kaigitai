@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Any, Dict, List
 from uuid import uuid4
 
-from src.core.loader import load_json_file
+from src.core.loader import load_json_file, load_json_files
 from src.core.resolver import NameRegistry
 from src.core.validator import validate_with_schema
 from src.core.writer import write_json_file
@@ -30,33 +30,64 @@ def _load_register(path: Path, schema: Path) -> List[Dict[str, Any]]:
     return payload
 
 
+def _load_existing_group_registry() -> Dict[str, str]:
+    """既存data/groupの name→id を取得する."""
+    group_dir = data_dir() / "group"
+    if not group_dir.exists():
+        return {}
+    existing: Dict[str, str] = {}
+    for rec in load_json_files(group_dir):
+        name = rec.get("name")
+        gid = rec.get("id")
+        if not name or not gid:
+            continue
+        existing[NameRegistry._normalize(name)] = gid
+    return existing
+
+
 def convert_group(dry_run: bool = False) -> tuple[NameRegistry, ConvertResult]:
     reg_path = register_dir() / "group" / "form.json"
     schema_path = schema_base_dir() / "group.register.schema.json"
     data_schema = schema_base_dir() / "group.data.schema.json"
     records = _load_register(reg_path, schema_path)
-    name_to_id_list: List[Dict[str, str]] = []
+    # 既存dataを先に取り込み、同名ならIDを再利用する
+    name_to_id: Dict[str, str] = _load_existing_group_registry()
+    prepared: List[Dict[str, Any]] = []
     result = ConvertResult(created=0, updated=0)
     for rec in records:
-        group_id = rec.get("id") or str(uuid4())
+        norm_name = NameRegistry._normalize(rec["name"])
+        # registerで明示IDがあれば優先、無ければ既存データのIDを流用、それも無ければ新規採番
+        group_id = rec.get("id") or name_to_id.get(norm_name) or str(uuid4())
+        name_to_id[norm_name] = group_id
+        prepared.append({**rec, "id": group_id})
+
+    registry = NameRegistry.from_lists([{"name": name, "id": gid} for name, gid in name_to_id.items()])
+
+    for rec in prepared:
+        parent_raw = rec.get("parent")
+        parent_id = None
+        if parent_raw:
+            try:
+                parent_id = registry.resolve(parent_raw)
+            except ValueError as e:
+                raise ValueError(f"親グループが未登録です: {parent_raw}") from e
         output = {
-            "id": group_id,
+            "id": rec["id"],
             "name": rec["name"],
-            "parent": rec.get("parent"),
+            "parent": parent_id,
             "category": rec["category"],
             "list_url": rec.get("list_url"),
             "official_url": rec["official_url"],
         }
         validate_with_schema(output, data_schema)
-        dest = data_dir() / "group" / f"{group_id}.json"
+        dest = data_dir() / "group" / f"{rec['id']}.json"
         if dry_run:
             result.planned.append(dest)
         else:
             result.updated += 1 if dest.exists() else 0
             result.created += 0 if dest.exists() else 1
             write_json_file(dest, output)
-        name_to_id_list.append({"name": rec["name"], "id": group_id})
-    return NameRegistry.from_lists(name_to_id_list), result
+    return registry, result
 
 
 def convert_person(dry_run: bool = False) -> tuple[NameRegistry, ConvertResult]:
