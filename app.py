@@ -237,6 +237,7 @@ def group_detail(id: str) -> str:
     group = _load_json(path, {})
     group["id"] = id
     groups = load_groups()
+    group_map = {g["id"]: g["name"] for g in groups}
     parent_label = "-"
     parent_id_for_link = None
     if group.get("parent"):
@@ -258,6 +259,7 @@ def group_detail(id: str) -> str:
         parent_id=parent_id_for_link,
         main_meetings=main_meetings,
         sub_meetings=sub_meetings,
+        group_map=group_map,
     )
 
 
