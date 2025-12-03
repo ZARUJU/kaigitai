@@ -31,7 +31,7 @@
     </div>
     <div class="grid md:grid-cols-2 gap-3">
       <label class="block text-sm text-slate-700">date
-        <input name="date" value="{{ meeting.date or '' }}" required pattern="\\d{4}-\\d{2}-\\d{2}" title="yyyy-mm-dd 形式で入力" class="w-full border rounded p-2 bg-white shadow-sm" placeholder="yyyy-mm-dd">
+        <input type="date" name="date" value="{{ meeting.date or '' }}" required class="w-full border rounded p-2 bg-white shadow-sm">
       </label>
       <label class="block text-sm text-slate-700">holding
         <select name="holding" required class="w-full border rounded p-2 bg-white shadow-sm">
@@ -44,10 +44,10 @@
     </div>
     <div class="grid md:grid-cols-2 gap-3">
       <label class="block text-sm text-slate-700">start_time
-        <input name="start_time" value="{{ meeting.start_time or '' }}" pattern="\\d{2}:\\d{2}" title="hh:mm 形式で入力" class="w-full border rounded p-2 bg-white shadow-sm" placeholder="hh:mm">
+        <input type="time" name="start_time" value="{{ meeting.start_time or '' }}" step="60" class="w-full border rounded p-2 bg-white shadow-sm" placeholder="hh:mm">
       </label>
       <label class="block text-sm text-slate-700">end_time
-        <input name="end_time" value="{{ meeting.end_time or '' }}" pattern="\\d{2}:\\d{2}" title="hh:mm 形式で入力" class="w-full border rounded p-2 bg-white shadow-sm" placeholder="hh:mm">
+        <input type="time" name="end_time" value="{{ meeting.end_time or '' }}" step="60" class="w-full border rounded p-2 bg-white shadow-sm" placeholder="hh:mm">
       </label>
     </div>
     <div class="space-y-2">
