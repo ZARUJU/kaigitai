@@ -9,10 +9,18 @@
     <a href="{{ url_for('meeting_new') }}" class="bg-blue-600 text-white px-3 py-2 rounded shadow hover:opacity-90 text-sm">新規</a>
   {% endif %}
 </div>
-<form method="GET" class="mb-4 flex space-x-2">
-  <input name="q" value="{{ q or '' }}" placeholder="検索（id/date/num/holding）" class="w-full border rounded p-2 bg-white shadow-sm">
-  <button type="submit" class="bg-slate-700 text-white px-3 py-2 rounded shadow hover:opacity-90 text-sm">検索</button>
-</form>
+{% if months %}
+  <div class="flex items-center flex-wrap gap-2 mb-4 text-sm">
+    <span class="text-slate-600">月を選択:</span>
+    {% for m in months %}
+      {% if active_month == m %}
+        <span class="px-2 py-1 rounded bg-blue-600 text-white">{{ m }}</span>
+      {% else %}
+        <a class="px-2 py-1 rounded border text-blue-600 hover:bg-slate-100" href="{{ url_for('meeting_month', ym=m) }}">{{ m }}</a>
+      {% endif %}
+    {% endfor %}
+  </div>
+{% endif %}
 <div class="grid md:grid-cols-2 gap-3">
   {% for m in meetings %}
     {% set meeting = m %}

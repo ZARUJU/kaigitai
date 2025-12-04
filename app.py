@@ -466,16 +466,11 @@ def person_update(id: str) -> str:
 
 @app.get("/meeting")
 def meeting_list() -> str:
-    q = request.args.get("q", "").strip().lower()
     meetings = load_meetings()
-    if q:
-        meetings = [
-            m for m in meetings
-            if q in m.get("id", "").lower()
-            or q in (m.get("date", "") or "").lower()
-            or q in (str(m.get("main", {}).get("num", ""))).lower()
-            or q in (m.get("holding", "") or "").lower()
-        ]
+    months = sorted({(m.get("date") or "")[:7] for m in meetings if m.get("date")}, reverse=True)
+    active_month = request.args.get("month") or (months[0] if months else None)
+    if active_month:
+        meetings = [m for m in meetings if (m.get("date") or "").startswith(active_month)]
     groups = load_groups()
     group_map = {g["id"]: g["name"] for g in groups}
     persons = load_persons()
@@ -485,8 +480,15 @@ def meeting_list() -> str:
         meetings=meetings,
         group_map=group_map,
         person_map=person_map,
-        q=q,
+        months=months,
+        active_month=active_month,
     )
+
+
+@app.get("/meeting/month/<ym>")
+def meeting_month(ym: str) -> str:
+    with app.test_request_context(f"/meeting?month={ym}"):
+        return meeting_list()
 
 
 @app.get("/meeting/new")
