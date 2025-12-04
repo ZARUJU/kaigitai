@@ -160,13 +160,13 @@ app.jinja_env.globals["url_for"] = _prefixed_url_for
 
 @app.get("/")
 def index() -> str:
-    return render_template("viewer_index.html")
+    return render_template("viewer_index.html", page_title="kaigitai viewer")
 
 
 @app.get("/group/")
 def group_list() -> str:
     groups = load_groups()
-    return render_template("group_list.html", groups=groups)
+    return render_template("group_list.html", groups=groups, page_title="Group - kaigitai viewer")
 
 
 @app.get("/group/<id>/")
@@ -203,20 +203,21 @@ def group_detail(id: str) -> str:
         main_meetings=main_meetings,
         sub_meetings=sub_meetings,
         group_map=group_map,
+        page_title=f"Group: {group.get('name') or id} - kaigitai viewer",
     )
 
 
 @app.get("/group/tree/")
 def group_tree() -> str:
     tree, max_level = build_group_tree()
-    return render_template("group_tree.html", tree=tree, level=None, max_level=max_level)
+    return render_template("group_tree.html", tree=tree, level=None, max_level=max_level, page_title="Group tree - kaigitai viewer")
 
 
 @app.get("/group/tree/<int:level>/")
 def group_tree_level(level: int) -> str:
     level_limit = level if level > 0 else None
     tree, max_level = build_group_tree(level_limit)
-    return render_template("group_tree.html", tree=tree, level=level_limit, max_level=max_level)
+    return render_template("group_tree.html", tree=tree, level=level_limit, max_level=max_level, page_title=f"Group tree level {level} - kaigitai viewer")
 
 
 @app.get("/group/<id>/children/")
@@ -236,13 +237,13 @@ def group_children(id: str) -> str:
         return nodes
 
     tree = build(id)
-    return render_template("group_children.html", group=current, tree=tree)
+    return render_template("group_children.html", group=current, tree=tree, page_title=f"Children of {current.get('name') or id} - kaigitai viewer")
 
 
 @app.get("/person/")
 def person_list() -> str:
     persons = load_persons()
-    return render_template("person_list.html", persons=persons)
+    return render_template("person_list.html", persons=persons, page_title="Person - kaigitai viewer")
 
 
 @app.get("/person/<id>/")
@@ -252,7 +253,7 @@ def person_detail(id: str) -> str:
         abort(404)
     person = _load_json(path, {})
     person["id"] = id
-    return render_template("person_detail.html", person=person)
+    return render_template("person_detail.html", person=person, page_title=f"Person: {person.get('name') or id} - kaigitai viewer")
 
 
 @app.get("/meeting/")
@@ -278,6 +279,7 @@ def meeting_list() -> str:
         group_map=group_map,
         person_map=person_map,
         q=q,
+        page_title="Meeting - kaigitai viewer",
     )
 
 
@@ -298,6 +300,7 @@ def meeting_detail(id: str) -> str:
         meeting=meeting,
         group_map=group_map,
         person_map=person_map,
+        page_title=f"Meeting: {group_map.get(meeting['main']['group_id'], '')} #{meeting['main']['num']} - kaigitai viewer",
     )
 
 

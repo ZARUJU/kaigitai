@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <title>{{ site_title or "kaigitai admin" }}</title>
+    <title>{{ page_title or site_title or "kaigitai admin" }}</title>
   </head>
   <body class="bg-slate-50 text-slate-900">
     <header class="bg-white border-b">
@@ -34,5 +34,11 @@
     <main class="max-w-5xl mx-auto p-6 space-y-6">
       {% block content %}{% endblock %}
     </main>
+    <footer class="border-t bg-white">
+      <div class="max-w-5xl mx-auto px-6 py-4 text-xs text-slate-600 flex flex-wrap gap-4 justify-between items-center">
+        <span>&copy; {{ site_title or "kaigitai" }}</span>
+        <a class="text-blue-600 hover:underline" href="https://github.com/ZARUJU/kaigitai">GitHub Repository</a>
+      </div>
+    </footer>
   </body>
 </html>
