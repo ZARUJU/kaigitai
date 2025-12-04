@@ -6,6 +6,15 @@
     <p class="text-sm uppercase tracking-wide text-slate-500">group</p>
     <h1 class="text-2xl font-bold text-slate-900">ツリー</h1>
   </div>
+  {% if max_level and max_level > 0 %}
+    <div class="flex items-center space-x-2 text-sm text-slate-700">
+      <span class="text-slate-500">親子レベルの選択:</span>
+      <a class="px-2 py-1 rounded border {% if level is none %}bg-blue-50 text-blue-700 border-blue-200{% else %}hover:bg-slate-100{% endif %}" href="{{ url_for('group_tree') }}">全て</a>
+      {% for lv in range(1, max_level + 1) %}
+        <a class="px-2 py-1 rounded border {% if level==lv %}bg-blue-50 text-blue-700 border-blue-200{% else %}hover:bg-slate-100{% endif %}" href="{{ url_for('group_tree_level', level=lv) }}">{{ lv }}</a>
+      {% endfor %}
+    </div>
+  {% endif %}
   <div class="p-3 border rounded bg-white shadow-sm overflow-x-auto">
     {% macro render_nodes(nodes) -%}
       <ul class="pl-4 space-y-1 list-disc whitespace-nowrap min-w-max">

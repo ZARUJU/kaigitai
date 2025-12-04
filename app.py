@@ -186,21 +186,44 @@ def group_list() -> str:
     return render_template("group_list.html", groups=groups)
 
 
-@app.get("/group/tree")
-def group_tree() -> str:
+def _build_group_tree(level_limit: Optional[int] = None) -> tuple[List[Dict[str, Any]], int]:
     groups = load_groups()
     by_parent: Dict[Optional[str], List[Dict[str, Any]]] = {}
     for g in groups:
         by_parent.setdefault(g.get("parent"), []).append(g)
 
-    def build(parent_id: Optional[str]) -> List[Dict[str, Any]]:
+    def build(parent_id: Optional[str], depth: int) -> List[Dict[str, Any]]:
         nodes: List[Dict[str, Any]] = []
         for child in by_parent.get(parent_id, []):
-            nodes.append({"data": child, "children": build(child["id"])})
+            # depthが制限に達したら子は展開しない
+            children = [] if (level_limit and depth >= level_limit) else build(child["id"], depth + 1)
+            nodes.append({"data": child, "children": children})
         return nodes
 
-    tree = build(None)
-    return render_template("group_tree.html", tree=tree)
+    def calc_depth(parent_id: Optional[str], depth: int) -> int:
+        children = by_parent.get(parent_id, [])
+        if not children:
+            return depth
+        return max(calc_depth(child["id"], depth + 1) for child in children)
+
+    roots = build(None, 1)
+    max_depth = 0
+    if by_parent.get(None):
+        max_depth = max(calc_depth(root["id"], 1) for root in by_parent[None])
+    return roots, max_depth
+
+
+@app.get("/group/tree")
+def group_tree() -> str:
+    tree, max_level = _build_group_tree()
+    return render_template("group_tree.html", tree=tree, level=None, max_level=max_level)
+
+
+@app.get("/group/tree/<int:level>")
+def group_tree_level(level: int) -> str:
+    level_limit = level if level > 0 else None
+    tree, max_level = _build_group_tree(level_limit)
+    return render_template("group_tree.html", tree=tree, level=level_limit, max_level=max_level)
 
 
 @app.get("/group/new")
