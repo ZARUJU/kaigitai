@@ -1,0 +1,74 @@
+{
+  "id": "64135256-3813-4eb4-9f4f-89f3da2f44ba",
+  "main": {
+    "group_id": "c5886c7a-ca8b-469d-a915-0287cab8bfcf",
+    "num": 1
+  },
+  "sub": [],
+  "date": "2021-11-04",
+  "holding": "online",
+  "start_time": "14:00",
+  "end_time": "15:00",
+  "agenda": [
+    "EBPMの推進体制について",
+    "各府省におけるEBPMの取組について",
+    "EBPM推進に係る経済・財政一体改革推進委員会の取組について",
+    "EBPM推進に係る行政評価局の取組について",
+    "EBPM推進に係るデジタル庁の取組について",
+    "EBPM推進に係る行政改革推進本部事務局の取組について",
+    "「統計等データの提供等の判断のためのガイドライン」に基づく取組について"
+  ],
+  "attendee": [],
+  "sources": {
+    "meeting_page": "https://www.digital.go.jp/councils/ebpm/o88lhOm9",
+    "transcript": null,
+    "announcement": null,
+    "other": []
+  },
+  "materials": [
+    {
+      "url": "https://www.digital.go.jp/assets/contents/node/basic_page/field_ref_resources/5535bc46-b873-42a7-99d6-bb0b70e2470d/20211104_meeting_EBPM_01.pdf",
+      "title": "議事次第（PDF／124KB）"
+    },
+    {
+      "url": "https://www.digital.go.jp/assets/contents/node/basic_page/field_ref_resources/5535bc46-b873-42a7-99d6-bb0b70e2470d/20211104_meeting_EBPM_02.pdf",
+      "title": "資料1：EBPMの推進体制について（PDF／261KB）"
+    },
+    {
+      "url": "https://www.digital.go.jp/assets/contents/node/basic_page/field_ref_resources/5535bc46-b873-42a7-99d6-bb0b70e2470d/20211104_meeting_EBPM_03.pdf",
+      "title": "資料2：各府省におけるEBPMの取組状況（PDF／3,005KB）"
+    },
+    {
+      "url": "https://www.digital.go.jp/assets/contents/node/basic_page/field_ref_resources/5535bc46-b873-42a7-99d6-bb0b70e2470d/20211104_meeting_EBPM_04.pdf",
+      "title": "資料3：厚生労働省提出資料（厚生労働省におけるEBPMの取組について）（PDF／3,519KB）"
+    },
+    {
+      "url": "https://www.digital.go.jp/assets/contents/node/basic_page/field_ref_resources/5535bc46-b873-42a7-99d6-bb0b70e2470d/20211104_meeting_EBPM_05.pdf",
+      "title": "資料4：経済産業省提出資料（経済産業省におけるEBPMの取組）（PDF／1,445KB）"
+    },
+    {
+      "url": "https://www.digital.go.jp/assets/contents/node/basic_page/field_ref_resources/5535bc46-b873-42a7-99d6-bb0b70e2470d/20211104_meeting_EBPM_06.pdf",
+      "title": "資料5：財務省提出資料（EBPMの基礎となるデータの利活用に向けた共同研究の取組みについて）（PDF／438KB）"
+    },
+    {
+      "url": "https://www.digital.go.jp/assets/contents/node/basic_page/field_ref_resources/5535bc46-b873-42a7-99d6-bb0b70e2470d/20211104_meeting_EBPM_07.pdf",
+      "title": "資料6：経済・財政一体改革推進委員会におけるEBPMの取組について（PDF／534KB）"
+    },
+    {
+      "url": "https://www.digital.go.jp/assets/contents/node/basic_page/field_ref_resources/5535bc46-b873-42a7-99d6-bb0b70e2470d/20211104_meeting_EBPM_08.pdf",
+      "title": "資料7：デジタル庁の取組について（PDF／1,453KB）"
+    },
+    {
+      "url": "https://www.digital.go.jp/assets/contents/node/basic_page/field_ref_resources/5535bc46-b873-42a7-99d6-bb0b70e2470d/20211104_meeting_EBPM_09.pdf",
+      "title": "資料8：EBPM推進に係る行政改革推進本部事務局の取組（PDF／230KB）"
+    },
+    {
+      "url": "https://www.digital.go.jp/assets/contents/node/basic_page/field_ref_resources/5535bc46-b873-42a7-99d6-bb0b70e2470d/20211104_meeting_EBPM_10.pdf",
+      "title": "資料9：「統計等データの提供等の判断のためのガイドライン」に基づく取組について（PDF／1,207KB）"
+    },
+    {
+      "url": "https://www.digital.go.jp/assets/contents/node/basic_page/field_ref_resources/5535bc46-b873-42a7-99d6-bb0b70e2470d/20211104_meeting_EBPM_18.pdf",
+      "title": "議事要旨（PDF／184KB）"
+    }
+  ]
+}
