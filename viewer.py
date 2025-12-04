@@ -4,13 +4,24 @@ import json
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from flask import Flask, abort, render_template, request
+from flask import Flask, abort, render_template, request, url_for as flask_url_for
 
 from src.utils import data_dir
 
 DISCLAIMER_TEXT = "本サイトの掲載情報は正確性を保証しません。参考情報としてご利用ください。"
+# GitHub Pagesのプロジェクトページ配下で動かすためのベースパス
+BASE_PATH = "/kaigitai"
 
 app = Flask(__name__)
+
+
+def _prefixed_url_for(endpoint: str, **values: Any) -> str:
+    """url_for結果にベースパスを付与する（外部URLは除外）。"""
+    url = flask_url_for(endpoint, **values)
+    if url.startswith("http://") or url.startswith("https://"):
+        return url
+    prefix = BASE_PATH.rstrip("/")
+    return f"{prefix}{url}"
 
 
 # ===== helpers =====
@@ -138,6 +149,10 @@ def inject_globals() -> Dict[str, Any]:
         "site_subtitle": "閲覧専用",
         "disclaimer_text": DISCLAIMER_TEXT,
     }
+
+
+# viewer用にurl_forを差し替え
+app.jinja_env.globals["url_for"] = _prefixed_url_for
 
 
 # ===== routes =====
