@@ -1,0 +1,31 @@
+# GOAL
+- meetingのsourcesスキーマを新形式（meeting_page/transcript/announcement/other）に移行する
+- 既存meetingデータを新形式へ移行し、UI/仕様を整備する
+
+# ユーザーからの依頼
+- meetingbasicのスキーマ変更（sources構造の変更）
+- 移行用スクリプトの作成と実行
+- meeting_detailのUI見直し
+- 今回の実装に関するtaskファイル作成
+
+# タスク
+## 現状
+- sourcesは配列+source_typeで保持しており、スキーマ/データ/UIが旧形式
+- 既存meetingデータが旧形式で保存されている
+## 変更後
+- sourcesをオブジェクト形式（meeting_page/transcript/announcement/other配列）に統一
+- スキーマと仕様ドキュメントを新形式に更新
+- UIを新形式の表示に対応
+- 移行スクリプトで既存データを新形式へ変換
+## 手順
+- 仕様書（002_er_and_schema.md）のsources項目を新形式に更新
+- スキーマ（register/data）を修正し、変換ロジックを新形式に対応
+- 移行スクリプトを追加し、全meetingデータを新形式へ変換して実行
+- meeting_detailテンプレートを新sources表示に対応（旧形式も後方互換）
+- register_to_dataマニュアルのmeeting例を新形式に更新
+- 変更内容を共有し、コミットメッセージ案を準備する
+## 手順
+- 仕様書（002_er_and_schema.md）のsources項目を新形式に更新
+- 移行スクリプトを追加し、全meetingデータを新形式へ変換して実行
+- meeting_detailテンプレートを新sources表示に対応（旧形式も後方互換）
+- 変更内容を共有し、コミットメッセージ案を準備する

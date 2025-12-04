@@ -135,20 +135,64 @@ def _parse_agenda(raw: str) -> List[str]:
     return [line.strip() for line in raw.splitlines() if line.strip()]
 
 
-def _parse_sources(raw: str) -> List[Dict[str, Any]]:
-    items: List[Dict[str, Any]] = []
-    for line in raw.splitlines():
+def _clean_url(value: Optional[str]) -> Optional[str]:
+    if value is None:
+        return None
+    v = value.strip()
+    return v or None
+
+
+def _normalize_sources(raw: Any) -> Dict[str, Any]:
+    """旧形式(list)も受け取り、新形式のdictに揃える."""
+    if not raw:
+        return {"meeting_page": None, "transcript": None, "announcement": None, "other": []}
+    if isinstance(raw, dict):
+        return {
+            "meeting_page": _clean_url(raw.get("meeting_page")),
+            "transcript": _clean_url(raw.get("transcript")),
+            "announcement": _clean_url(raw.get("announcement") or raw.get("notice")),
+            "other": raw.get("other") or [],
+        }
+    meeting_page = None
+    transcript = None
+    announcement = None
+    other_items: List[Dict[str, Any]] = []
+    for item in raw:
+        url = _clean_url(item.get("url")) if isinstance(item, dict) else None
+        if not url:
+            continue
+        stype = item.get("source_type") if isinstance(item, dict) else None
+        title = item.get("title") if isinstance(item, dict) else None
+        if stype == "meeting_page" and not meeting_page:
+            meeting_page = url
+        elif stype in ("minutes", "transcript") and not transcript:
+            transcript = url
+        elif stype in ("announcement", "notice") and not announcement:
+            announcement = url
+        else:
+            other_items.append({"url": url, "title": title})
+    return {"meeting_page": meeting_page, "transcript": transcript, "announcement": announcement, "other": other_items}
+
+
+def _build_sources_from_form(form: Any) -> Dict[str, Any]:
+    other_raw = form.get("sources_other_lines", "") if hasattr(form, "get") else ""
+    other_items: List[Dict[str, Any]] = []
+    for line in other_raw.splitlines():
         line = line.strip()
         if not line:
             continue
         parts = [p.strip() for p in line.split("|")]
-        if len(parts) < 1:
+        url = parts[0] if parts else ""
+        if not url:
             continue
-        url = parts[0]
-        source_type = parts[1] if len(parts) > 1 and parts[1] else "other"
-        title = parts[2] if len(parts) > 2 and parts[2] else None
-        items.append({"url": url, "source_type": source_type or "other", "title": title})
-    return items
+        title = parts[1] if len(parts) > 1 and parts[1] else None
+        other_items.append({"url": url, "title": title})
+    return {
+        "meeting_page": _clean_url(form.get("sources_meeting_page") if hasattr(form, "get") else None),
+        "transcript": _clean_url(form.get("sources_transcript") if hasattr(form, "get") else None),
+        "announcement": _clean_url(form.get("sources_announcement") if hasattr(form, "get") else None),
+        "other": other_items,
+    }
 
 
 def _parse_materials(raw: str) -> List[Dict[str, Any]]:
@@ -442,6 +486,10 @@ def meeting_new() -> str:
         "sub_group_id_list": ["" for _ in range(3)],
         "sub_num_list": ["" for _ in range(3)],
         "attendee_multi": [],
+        "sources_meeting_page": "",
+        "sources_transcript": "",
+        "sources_announcement": "",
+        "sources_other_lines": "",
     }
     return render_template(
         "meeting_form.html",
@@ -457,7 +505,6 @@ def _extract_meeting_form(form) -> Dict[str, Any]:
     main_group_id = form["main_group_id"].strip()
     main_num = int(form["main_num"])
     agenda_raw = form.get("agenda_lines", "")
-    sources_raw = form.get("sources_lines", "")
     materials_raw = form.get("materials_lines", "")
 
     attendees: List[str] = []
@@ -487,7 +534,7 @@ def _extract_meeting_form(form) -> Dict[str, Any]:
         "end_time": form.get("end_time") or None,
         "agenda": _parse_agenda(agenda_raw),
         "attendee": attendees,
-        "sources": _parse_sources(sources_raw),
+        "sources": _build_sources_from_form(form),
         "materials": _parse_materials(materials_raw),
     }
     return payload
@@ -521,6 +568,7 @@ def meeting_detail(id: str) -> str:
         return "not found", 404
     meeting = _load_json(path, {})
     meeting["id"] = id
+    meeting["sources"] = _normalize_sources(meeting.get("sources"))
     groups = load_groups()
     persons = load_persons()
     group_map = {g["id"]: g["name"] for g in groups}
@@ -540,6 +588,7 @@ def meeting_edit(id: str) -> str:
         return "not found", 404
     meeting = _load_json(path, {})
     meeting["id"] = id
+    meeting["sources"] = _normalize_sources(meeting.get("sources"))
     groups = load_groups()
     persons = load_persons()
     # populate helper fields
@@ -548,9 +597,11 @@ def meeting_edit(id: str) -> str:
     meeting["sub_num_list"] = [s["num"] for s in sub_list] + ["" for _ in range(3 - len(sub_list))]
     meeting["attendee_multi"] = meeting.get("attendee", [])
     meeting["agenda_lines"] = "\n".join(meeting.get("agenda", []))
-    meeting["sources_lines"] = "\n".join(
-        f"{s.get('url','')}|{s.get('source_type','')}|{s.get('title','') or ''}"
-        for s in meeting.get("sources", [])
+    meeting["sources_meeting_page"] = meeting["sources"].get("meeting_page") or ""
+    meeting["sources_transcript"] = meeting["sources"].get("transcript") or ""
+    meeting["sources_announcement"] = meeting["sources"].get("announcement") or ""
+    meeting["sources_other_lines"] = "\n".join(
+        f"{s.get('url','')}|{s.get('title','') or ''}" for s in meeting["sources"].get("other", []) if s.get("url")
     )
     meeting["materials_lines"] = "\n".join(
         f"{m.get('url','')}|{m.get('title','') or ''}" for m in meeting.get("materials", [])

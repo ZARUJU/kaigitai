@@ -52,20 +52,25 @@
         "items": { "type": "string" }
       },
       "sources": {
-        "type": "array",
-      "items": {
         "type": "object",
         "properties": {
-          "url": { "type": "string", "format": "uri" },
-          "source_type": {
-            "type": "string",
-            "enum": ["meeting_page", "minutes", "other"]
-          },
-          "title": { "type": "string" }
+          "meeting_page": { "type": ["string", "null"], "format": "uri" },
+          "transcript": { "type": ["string", "null"], "format": "uri" },
+          "announcement": { "type": ["string", "null"], "format": "uri" },
+          "other": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "url": { "type": "string", "format": "uri" },
+                "title": { "type": ["string", "null"] }
+              },
+              "required": ["url"],
+              "additionalProperties": false
+            }
+          }
         },
-        "required": ["url"],
         "additionalProperties": false
-        }
       },
       "materials": {
         "type": "array",

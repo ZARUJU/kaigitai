@@ -55,14 +55,37 @@
   </div>
   {% endif %}
   {% if meeting.sources %}
-  <div class="p-3 rounded border bg-white shadow-sm">
-    <p class="text-xs text-slate-500">sources</p>
-    <ul class="list-disc pl-5 space-y-1 text-slate-800">
-      {% for s in meeting.sources %}
-      <li><a class="text-blue-600 hover:underline break-all" href="{{ s.url }}">{{ s.title or s.url }}</a> ({{ s.source_type }})</li>
-      {% endfor %}
-    </ul>
-  </div>
+    {% if meeting.sources is mapping %}
+      {% set has_source = meeting.sources.meeting_page or meeting.sources.transcript or meeting.sources.announcement or (meeting.sources.other and meeting.sources.other|length > 0) %}
+      {% if has_source %}
+      <div class="p-3 rounded border bg-white shadow-sm">
+        <p class="text-xs text-slate-500">sources</p>
+        <ul class="list-disc pl-5 space-y-1 text-slate-800">
+          {% if meeting.sources.meeting_page %}
+            <li><span class="text-slate-600 text-xs">会議ページ</span> <a class="text-blue-600 hover:underline break-all" href="{{ meeting.sources.meeting_page }}">{{ meeting.sources.meeting_page }}</a></li>
+          {% endif %}
+          {% if meeting.sources.transcript %}
+            <li><span class="text-slate-600 text-xs">議事録・逐語録</span> <a class="text-blue-600 hover:underline break-all" href="{{ meeting.sources.transcript }}">{{ meeting.sources.transcript }}</a></li>
+          {% endif %}
+          {% if meeting.sources.announcement %}
+            <li><span class="text-slate-600 text-xs">開催案内</span> <a class="text-blue-600 hover:underline break-all" href="{{ meeting.sources.announcement }}">{{ meeting.sources.announcement }}</a></li>
+          {% endif %}
+          {% for o in meeting.sources.other or [] %}
+            <li><span class="text-slate-600 text-xs">その他の出典</span> <a class="text-blue-600 hover:underline break-all" href="{{ o.url }}">{{ o.title or o.url }}</a></li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+    {% else %}
+      <div class="p-3 rounded border bg-white shadow-sm">
+        <p class="text-xs text-slate-500">sources</p>
+        <ul class="list-disc pl-5 space-y-1 text-slate-800">
+          {% for s in meeting.sources %}
+          <li><a class="text-blue-600 hover:underline break-all" href="{{ s.url }}">{{ s.title or s.url }}</a> {% if s.source_type %}({{ s.source_type }}){% endif %}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
   {% endif %}
   {% if meeting.materials %}
   <div class="p-3 rounded border bg-white shadow-sm">

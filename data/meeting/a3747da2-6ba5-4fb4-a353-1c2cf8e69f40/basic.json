@@ -16,12 +16,11 @@
     "社会保障審議会運営規則第４条に規定する「会長の同意」の運用解釈について"
   ],
   "attendee": [],
-  "sources": [
-    {
-      "url": "https://www.mhlw.go.jp/stf/newpage_56633.html",
-      "source_type": "meeting_page",
-      "title": null
-    }
-  ],
+  "sources": {
+    "meeting_page": "https://www.mhlw.go.jp/stf/newpage_56633.html",
+    "transcript": "https://www.mhlw.go.jp/stf/newpage_56633.html",
+    "announcement": null,
+    "other": []
+  },
   "materials": []
 }

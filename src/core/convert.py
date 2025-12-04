@@ -45,6 +45,51 @@ def _load_existing_group_registry() -> Dict[str, str]:
     return existing
 
 
+def _normalize_sources(raw: Any) -> Dict[str, Any]:
+    """registerのsourcesを新スキーマに揃える."""
+    if not raw:
+        return {}
+    if isinstance(raw, dict):
+        other_list = []
+        for item in raw.get("other") or []:
+            other_list.append({"url": item["url"], "title": item.get("title")})
+        return {
+            "meeting_page": raw.get("meeting_page"),
+            "transcript": raw.get("transcript"),
+            "announcement": raw.get("announcement") or raw.get("notice"),
+            "other": other_list,
+        }
+    # 旧形式(array)のフォールバック
+    meeting_page = None
+    transcript = None
+    announcement = None
+    other_items: List[Dict[str, Any]] = []
+    for item in raw:
+        url = item.get("url") if isinstance(item, dict) else None
+        if not url:
+            continue
+        stype = item.get("source_type") if isinstance(item, dict) else None
+        title = item.get("title") if isinstance(item, dict) else None
+        if stype == "meeting_page" and not meeting_page:
+            meeting_page = url
+        elif stype in ("minutes", "transcript") and not transcript:
+            transcript = url
+        elif stype in ("announcement", "notice") and not announcement:
+            announcement = url
+        else:
+            other_items.append({"url": url, "title": title})
+    result: Dict[str, Any] = {}
+    if meeting_page:
+        result["meeting_page"] = meeting_page
+    if transcript:
+        result["transcript"] = transcript
+    if announcement:
+        result["announcement"] = announcement
+    if other_items:
+        result["other"] = other_items
+    return result
+
+
 def convert_group(dry_run: bool = False) -> tuple[NameRegistry, ConvertResult]:
     reg_path = register_dir() / "group" / "form.json"
     schema_path = schema_base_dir() / "group.register.schema.json"
@@ -145,6 +190,7 @@ def convert_meeting(
             result.skipped += 1
             result.errors.append(str(e))
             continue
+        sources = _normalize_sources(rec.get("sources"))
         output = {
           "id": meeting_id,
           "main": {"group_id": main_id, "num": main["num"]},
@@ -155,7 +201,7 @@ def convert_meeting(
           "end_time": rec.get("end_time"),
           "agenda": rec.get("agenda", []),
           "attendee": attendee_ids,
-          "sources": rec.get("sources", []),
+          "sources": sources,
           "materials": rec.get("materials", []),
         }
         validate_with_schema(output, data_schema)

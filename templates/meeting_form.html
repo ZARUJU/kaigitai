@@ -77,11 +77,23 @@
       <button type="button" id="add-attendee" class="text-sm text-blue-600 hover:underline">+ 行を追加</button>
       <p class="text-xs text-slate-500 mt-1">候補は person id/name を入力して検索できます</p>
     </div>
-    <label class="block text-sm text-slate-700">sources（1行: url|source_type|title）
-      <textarea name="sources_lines" rows="4" class="w-full font-mono text-sm border rounded p-2 bg-white shadow-sm" placeholder="https://example.com|meeting_page|タイトル">{{ meeting.sources_lines or '' }}</textarea>
-      <p class="text-xs text-slate-500 mt-1">source_type: meeting_page / minutes / other</p>
-      <p class="text-xs text-slate-500">例: https://example.com/agenda|meeting_page|開催案内</p>
-    </label>
+    <div class="space-y-2 text-sm text-slate-700">
+      <p>sources</p>
+      <div class="grid md:grid-cols-2 gap-2">
+        <label class="block">meeting_page
+          <input type="url" name="sources_meeting_page" value="{{ meeting.sources_meeting_page or '' }}" class="w-full border rounded p-2 bg-white shadow-sm" placeholder="https://example.com/meeting">
+        </label>
+        <label class="block">transcript
+          <input type="url" name="sources_transcript" value="{{ meeting.sources_transcript or '' }}" class="w-full border rounded p-2 bg-white shadow-sm" placeholder="https://example.com/transcript">
+        </label>
+      </div>
+      <label class="block">announcement
+        <input type="url" name="sources_announcement" value="{{ meeting.sources_announcement or '' }}" class="w-full border rounded p-2 bg-white shadow-sm" placeholder="https://example.com/notice">
+      </label>
+      <label class="block">other（1行: url|title）
+        <textarea name="sources_other_lines" rows="3" class="w-full font-mono text-sm border rounded p-2 bg-white shadow-sm" placeholder="https://example.com|資料名">{{ meeting.sources_other_lines or '' }}</textarea>
+      </label>
+    </div>
     <label class="block text-sm text-slate-700">materials（1行: url|title）
       <textarea name="materials_lines" rows="4" class="w-full font-mono text-sm border rounded p-2 bg-white shadow-sm" placeholder="https://example.com/material.pdf|資料名">{{ meeting.materials_lines or '' }}</textarea>
     </label>

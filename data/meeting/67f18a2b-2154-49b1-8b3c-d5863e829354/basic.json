@@ -15,13 +15,12 @@
     "令和６年度厚生労働省予算案について"
   ],
   "attendee": [],
-  "sources": [
-    {
-      "url": "https://www.mhlw.go.jp/stf/newpage_38089.html",
-      "source_type": "meeting_page",
-      "title": null
-    }
-  ],
+  "sources": {
+    "meeting_page": "https://www.mhlw.go.jp/stf/newpage_38089.html",
+    "transcript": null,
+    "announcement": null,
+    "other": []
+  },
   "materials": [
     {
       "url": "https://www.mhlw.go.jp/stf/newpage_37566.html",

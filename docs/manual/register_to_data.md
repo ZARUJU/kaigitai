@@ -67,9 +67,14 @@
     "end_time": "12:00",
     "agenda": ["議題1", "議題2"],
     "attendee": ["氏名A", "氏名B"],
-    "sources": [
-      { "url": "https://example.com/meeting/1", "source_type": "meeting_page", "title": null }
-    ],
+    "sources": {
+      "meeting_page": "https://example.com/meeting/1",
+      "transcript": "https://example.com/minutes/1",
+      "announcement": "https://example.com/notice/1",
+      "other": [
+        { "url": "https://example.com/other.pdf", "title": "その他資料" }
+      ]
+    },
     "materials": [
       { "url": "https://example.com/materials/1.pdf", "title": "資料1" }
     ]
