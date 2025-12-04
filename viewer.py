@@ -169,6 +169,19 @@ def group_list() -> str:
     return render_template("group_list.html", groups=groups, page_title="Group - kaigitai viewer")
 
 
+@app.get("/group/category/")
+def group_by_category() -> str:
+    groups = load_groups()
+    category_map: Dict[str, List[Dict[str, Any]]] = {}
+    for g in groups:
+        cat = g.get("category") or "(未分類)"
+        category_map.setdefault(cat, []).append(g)
+    for cat in category_map:
+        category_map[cat] = sorted(category_map[cat], key=lambda g: (g.get("name") or "", g["id"]))
+    sorted_categories = sorted(category_map.items(), key=lambda x: (len(x[1]), x[0]))
+    return render_template("group_category.html", categories=sorted_categories, page_title="Group by category - kaigitai viewer")
+
+
 @app.get("/group/<id>/")
 def group_detail(id: str) -> str:
     path = data_dir() / "group" / f"{id}.json"

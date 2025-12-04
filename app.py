@@ -230,6 +230,19 @@ def group_list() -> str:
     return render_template("group_list.html", groups=groups)
 
 
+@app.get("/group/category")
+def group_by_category() -> str:
+    groups = load_groups()
+    category_map: Dict[str, List[Dict[str, Any]]] = {}
+    for g in groups:
+        cat = g.get("category") or "(未分類)"
+        category_map.setdefault(cat, []).append(g)
+    for cat in category_map:
+        category_map[cat] = sorted(category_map[cat], key=lambda g: (g.get("name") or "", g["id"]))
+    sorted_categories = sorted(category_map.items(), key=lambda x: (len(x[1]), x[0]))
+    return render_template("group_category.html", categories=sorted_categories)
+
+
 def _build_group_tree(level_limit: Optional[int] = None) -> tuple[List[Dict[str, Any]], int]:
     groups = load_groups()
     by_parent: Dict[Optional[str], List[Dict[str, Any]]] = {}

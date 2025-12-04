@@ -7,6 +7,7 @@
   </div>
   <div class="space-x-2">
     <a href="{{ url_for('group_tree') }}" class="text-sm text-blue-600 hover:underline">ツリー表示</a>
+    <a href="{{ url_for('group_by_category') }}" class="text-sm text-blue-600 hover:underline">カテゴリ別</a>
     {% if not readonly %}
       <a href="{{ url_for('group_new') }}" class="bg-blue-600 text-white px-3 py-2 rounded shadow hover:opacity-90 text-sm">新規</a>
     {% endif %}

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<a class="text-blue-600 hover:underline text-sm" href="{{ url_for('group_list') }}">← グループ一覧へ</a>
+<div class="space-y-4">
+  <div>
+    <p class="text-sm uppercase tracking-wide text-slate-500">group</p>
+    <h1 class="text-2xl font-bold text-slate-900">カテゴリ別</h1>
+  </div>
+  <div class="space-y-3">
+    {% for cat, items in categories %}
+      <div class="border rounded bg-white shadow-sm">
+        <div class="px-4 py-2 border-b bg-slate-50 flex items-center justify-between">
+          <p class="font-semibold text-slate-800">{{ cat }}</p>
+          <span class="text-xs text-slate-500">{{ items|length }} 件</span>
+        </div>
+        <div class="p-4 grid md:grid-cols-2 gap-3">
+          {% for g in items %}
+            <a class="block border rounded-lg p-3 hover:shadow" href="{{ url_for('group_detail', id=g.id) }}">
+              <p class="font-semibold text-slate-800 truncate">{{ g.name or g.id }}</p>
+              <p class="text-xs text-slate-500">id: {{ g.id }}</p>
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
