@@ -50,7 +50,7 @@ def load_groups() -> List[Dict[str, Any]]:
         data = _load_json(file, {})
         data["id"] = file.stem
         results.append(data)
-    return results
+    return sorted(results, key=lambda g: (g.get("name") or "", g["id"]))
 
 
 def load_persons() -> List[Dict[str, Any]]:
