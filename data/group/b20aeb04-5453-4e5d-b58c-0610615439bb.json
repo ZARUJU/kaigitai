@@ -1,7 +1,7 @@
 {
   "id": "b20aeb04-5453-4e5d-b58c-0610615439bb",
-  "name": "労働条件分科会最低賃金部会",
-  "parent": "b206a532-05aa-4a99-aa3f-1bfcb32a35f8",
+  "name": "最低賃金部会",
+  "parent": "労働条件分科会",
   "category": "審議会(子)",
   "list_url": "https://www.mhlw.go.jp/stf/shingi/shingi-rousei_126971.html",
   "official_url": "https://www.mhlw.go.jp/stf/shingi/shingi-rousei_126971.html"
