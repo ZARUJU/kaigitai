@@ -5,7 +5,9 @@
     <p class="text-sm uppercase tracking-wide text-slate-500">data</p>
     <h1 class="text-2xl font-bold text-slate-900">Person</h1>
   </div>
-  <a href="{{ url_for('person_new') }}" class="bg-blue-600 text-white px-3 py-2 rounded shadow hover:opacity-90 text-sm">新規</a>
+  {% if not readonly %}
+    <a href="{{ url_for('person_new') }}" class="bg-blue-600 text-white px-3 py-2 rounded shadow hover:opacity-90 text-sm">新規</a>
+  {% endif %}
 </div>
 <div class="grid md:grid-cols-2 gap-3">
   {% for p in persons %}

@@ -5,7 +5,9 @@
     <p class="text-sm uppercase tracking-wide text-slate-500">data</p>
     <h1 class="text-2xl font-bold text-slate-900">Meeting</h1>
   </div>
-  <a href="{{ url_for('meeting_new') }}" class="bg-blue-600 text-white px-3 py-2 rounded shadow hover:opacity-90 text-sm">新規</a>
+  {% if not readonly %}
+    <a href="{{ url_for('meeting_new') }}" class="bg-blue-600 text-white px-3 py-2 rounded shadow hover:opacity-90 text-sm">新規</a>
+  {% endif %}
 </div>
 <form method="GET" class="mb-4 flex space-x-2">
   <input name="q" value="{{ q or '' }}" placeholder="検索（id/date/num/holding）" class="w-full border rounded p-2 bg-white shadow-sm">

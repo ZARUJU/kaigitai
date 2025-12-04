@@ -32,11 +32,13 @@
     {% endif %}
   </div>
   <div class="flex space-x-2">
-    <a href="{{ url_for('group_edit', id=group.id) }}" class="bg-blue-600 text-white px-3 py-2 rounded shadow hover:opacity-90 text-sm">編集</a>
-    <form method="POST" action="{{ url_for('group_delete', id=group.id) }}" onsubmit="return confirm('削除しますか？');">
-      <button type="submit" class="bg-red-600 text-white px-3 py-2 rounded shadow hover:opacity-90 text-sm">削除</button>
-    </form>
-    <a href="{{ url_for('meeting_new', main_group_id=group.id) }}" class="bg-green-600 text-white px-3 py-2 rounded shadow hover:opacity-90 text-sm">この団体で会議追加</a>
+    {% if not readonly %}
+      <a href="{{ url_for('group_edit', id=group.id) }}" class="bg-blue-600 text-white px-3 py-2 rounded shadow hover:opacity-90 text-sm">編集</a>
+      <form method="POST" action="{{ url_for('group_delete', id=group.id) }}" onsubmit="return confirm('削除しますか？');">
+        <button type="submit" class="bg-red-600 text-white px-3 py-2 rounded shadow hover:opacity-90 text-sm">削除</button>
+      </form>
+      <a href="{{ url_for('meeting_new', main_group_id=group.id) }}" class="bg-green-600 text-white px-3 py-2 rounded shadow hover:opacity-90 text-sm">この団体で会議追加</a>
+    {% endif %}
     <a href="{{ url_for('group_children', id=group.id) }}" class="text-blue-600 hover:underline text-sm self-center">子団体ツリー</a>
   </div>
 

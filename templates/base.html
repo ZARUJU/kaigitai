@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <title>kaigitai admin</title>
+    <title>{{ site_title or "kaigitai admin" }}</title>
   </head>
   <body class="bg-slate-50 text-slate-900">
     <header class="bg-white border-b">
@@ -12,8 +12,8 @@
         <a class="flex items-center space-x-3 hover:opacity-80" href="{{ url_for('index') }}">
           <div class="w-8 h-8 rounded bg-blue-600 text-white flex items-center justify-center font-bold text-lg">K</div>
           <div>
-            <p class="text-sm font-semibold text-slate-900">kaigitai admin</p>
-            <p class="text-xs text-slate-500">登録・閲覧</p>
+            <p class="text-sm font-semibold text-slate-900">{{ site_title or "kaigitai admin" }}</p>
+            <p class="text-xs text-slate-500">{{ site_subtitle or "登録・閲覧" }}</p>
           </div>
         </a>
         <nav class="flex items-center space-x-3 text-sm">
@@ -24,6 +24,13 @@
         </nav>
       </div>
     </header>
+    {% if disclaimer_text %}
+    <div class="bg-amber-50 text-amber-800 border border-amber-200">
+      <div class="max-w-5xl mx-auto px-6 py-2 text-sm">
+        {{ disclaimer_text }}
+      </div>
+    </div>
+    {% endif %}
     <main class="max-w-5xl mx-auto p-6 space-y-6">
       {% block content %}{% endblock %}
     </main>
