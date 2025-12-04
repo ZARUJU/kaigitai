@@ -6,7 +6,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <title>{{ page_title or site_title or "kaigitai admin" }}</title>
   </head>
-  <body class="bg-slate-50 text-slate-900">
+  <body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col">
     <header class="bg-white border-b">
       <div class="max-w-5xl mx-auto px-6 py-3 flex items-center justify-between">
         <a class="flex items-center space-x-3 hover:opacity-80" href="{{ url_for('index') }}">
@@ -31,7 +31,7 @@
       </div>
     </div>
     {% endif %}
-    <main class="max-w-5xl mx-auto p-6 space-y-6">
+    <main class="max-w-5xl mx-auto p-6 space-y-6 flex-1 w-full">
       {% block content %}{% endblock %}
     </main>
     <footer class="border-t bg-white">
