@@ -6,12 +6,12 @@
     <p class="text-sm uppercase tracking-wide text-slate-500">group</p>
     <h1 class="text-2xl font-bold text-slate-900">ツリー</h1>
   </div>
-  <div class="p-3 border rounded bg-white shadow-sm">
+  <div class="p-3 border rounded bg-white shadow-sm overflow-x-auto">
     {% macro render_nodes(nodes) -%}
-      <ul class="pl-4 space-y-1 list-disc">
+      <ul class="pl-4 space-y-1 list-disc whitespace-nowrap min-w-max">
         {% for n in nodes %}
-          <li>
-            <a class="text-blue-600 hover:underline" href="{{ url_for('group_detail', id=n.data.id) }}">{{ n.data.name or n.data.id }}</a>
+          <li class="whitespace-nowrap">
+            <a class="text-blue-600 hover:underline whitespace-nowrap" href="{{ url_for('group_detail', id=n.data.id) }}">{{ n.data.name or n.data.id }}</a>
             {% if n.children %}
               {{ render_nodes(n.children) }}
             {% endif %}
