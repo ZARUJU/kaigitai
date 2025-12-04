@@ -2,7 +2,7 @@
   "id": "d89483b0-6347-4e81-a405-5b0ef1bfe9b1",
   "name": "厚生労働省",
   "parent": "82b9f6e1-445b-441a-b1ac-9503138f97ff",
-  "category": "省庁",
+  "category": "国/省庁",
   "list_url": "https://www.mhlw.go.jp/stf/shingi/indexshingi.html",
   "official_url": "https://www.mhlw.go.jp/index.html"
 }

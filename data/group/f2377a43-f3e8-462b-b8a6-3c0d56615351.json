@@ -2,7 +2,7 @@
   "id": "f2377a43-f3e8-462b-b8a6-3c0d56615351",
   "name": "デジタル庁",
   "parent": "82b9f6e1-445b-441a-b1ac-9503138f97ff",
-  "category": "省庁",
+  "category": "国/省庁",
   "list_url": "https://www.digital.go.jp/councils",
   "official_url": "https://www.digital.go.jp/councils"
 }
